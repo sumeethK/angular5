@@ -1,22 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { MongodbService } from './mongodb.service';
 import { TodoItem } from './model/todo-item';
 import { Status } from './model/task-status';
+import { fadeIn, done } from '../animation';
 
 @Component({
   selector: 'app-todos',
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.css'],
   animations: [
-trigger('fade', [
-  // state(),
-  transition('void => *', [
-    style({background: 'yellow', opacity : 0})
-    , animate(1000, style({background: 'white', opacity : 1}))
-  ])
-])
-
+    fadeIn,
+    done
   ],
   providers: [MongodbService],
 })
@@ -41,16 +35,20 @@ export class TodosComponent implements OnInit {
 
       },
       creator: 'default',
-      assignee: 'default'
+      assignee: 'default',
     };
   }
 
   ngOnInit() {
     console.log('Initializing todos component..');
     this._mongoService.getAllTodos()
-      .subscribe(resTodo => this.todosList = resTodo);
+      .subscribe(resTodo => {
+        this.todosList = resTodo;
+      }
+      );
     this.initializeTodo();
   }
+
 
   addTodo() {
     if (this.todo != null || this.todo !== undefined) {
@@ -79,10 +77,9 @@ export class TodosComponent implements OnInit {
         , targetDate: newTodo.task.targetDate
         , status: newTodo.task.status
         , comments: newTodo.task.comments
-
       },
       creator: newTodo.creator,
-      assignee: newTodo.assignee
+      assignee: newTodo.assignee,
     };
     return tmp;
 
@@ -102,12 +99,12 @@ export class TodosComponent implements OnInit {
   // }
 
   deleteTodo(toBeDeleted) {
-
     this._mongoService.delete(toBeDeleted)
       .subscribe(deletedTodo => {
         for (let i = 0; i < this.todosList.length; i++) {
           if (this.todosList[i]._id === toBeDeleted._id) {
-            console.log('Task \'' + this.todosList[i].task.name + '\' deed ');
+            console.log('Task \'' + this.todosList[i].task.name + '\' deleted ');
+            this.todosList[i].task.status = Status.DELETED;
             this.todosList.splice(i, 1);
             break;
           }
@@ -131,7 +128,7 @@ export class TodosComponent implements OnInit {
     // this._mongoService.addAllTodos(this.todosList);
   }
   isDone(todo) {
-    if (todo.task.status === Status.COMPLETED ) {
+    if (todo.task.status === Status.COMPLETED) {
       return true;
     } else { return false; }
   }
