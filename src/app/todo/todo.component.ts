@@ -1,8 +1,10 @@
+import { NotificationType , Notification} from './../notification';
 import { Component, OnInit, Input } from '@angular/core';
 import { MongodbService } from './mongodb.service';
 import { TodoItem } from './model/todo-item';
 import { Status } from './model/task-status';
 import { fadeIn, done } from '../animation';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-todos',
@@ -20,22 +22,22 @@ export class TodosComponent implements OnInit {
   @Input() todoSearch;
   appState: AppStatus = AppStatus.ADD;
 
-  constructor(private _mongoService: MongodbService) { }
+  constructor(private _mongoService: MongodbService, private _notification: NotificationService) { }
 
   initializeTodo() {
     this.todo = {
       _id: 0,
       task: {
-        name: 'Default'
-        , description: 'Default'
+        name: 'Name'
+        , description: 'Description'
         , creationDate: new Date()
         , targetDate: new Date()
         , status: Status.IN_PROGRESS
-        , comments: 'default'
+        , comments: 'comment'
 
       },
-      creator: 'default',
-      assignee: 'default',
+      creator: 'Admin',
+      assignee: 'DJ',
     };
   }
 
@@ -52,6 +54,7 @@ export class TodosComponent implements OnInit {
 
   addTodo() {
     if (this.todo != null || this.todo !== undefined) {
+      this._notification.changeMessage(new Notification(NotificationType.ADD, 'intialied...'));
       console.log('Adding new task  \'' + this.todo.task.name);
       this.todo._id = 0;
       const tmp: TodoItem = this.createNewFrom(this.todo);

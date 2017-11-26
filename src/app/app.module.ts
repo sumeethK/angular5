@@ -9,12 +9,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { NotificationService } from './notification.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchPipe,
-    TodosComponent
+    TodosComponent,
   ],
   imports: [
     BrowserModule,
@@ -23,7 +24,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     AppRoutingModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [NotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
